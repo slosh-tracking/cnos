@@ -47,19 +47,20 @@ def visualize(rgb, detections, save_path="/content/tmp/tmp.png"):
     alpha = 0.33
 
     for mask_idx, det in enumerate(detections):
-        mask = rle_to_mask(det[mask_idx]["segmentation"])
-        edge = canny(mask)
-        edge = binary_dilation(edge, np.ones((2, 2)))
-        obj_id = det[mask_idx]["category_id"]
-        temp_id = obj_id - 1
+        if det:
+            mask = rle_to_mask(det[mask_idx]["segmentation"])
+            edge = canny(mask)
+            edge = binary_dilation(edge, np.ones((2, 2)))
+            obj_id = det[mask_idx]["category_id"]
+            temp_id = obj_id - 1
 
-        r = int(255*colors[temp_id][0])
-        g = int(255*colors[temp_id][1])
-        b = int(255*colors[temp_id][2])
-        img[mask, 0] = alpha*r + (1 - alpha)*img[mask, 0]
-        img[mask, 1] = alpha*g + (1 - alpha)*img[mask, 1]
-        img[mask, 2] = alpha*b + (1 - alpha)*img[mask, 2]   
-        img[edge, :] = 255
+            r = int(255*colors[temp_id][0])
+            g = int(255*colors[temp_id][1])
+            b = int(255*colors[temp_id][2])
+            img[mask, 0] = alpha*r + (1 - alpha)*img[mask, 0]
+            img[mask, 1] = alpha*g + (1 - alpha)*img[mask, 1]
+            img[mask, 2] = alpha*b + (1 - alpha)*img[mask, 2]   
+            img[edge, :] = 255
     
     img = Image.fromarray(np.uint8(img))
     img.save(save_path)
