@@ -117,7 +117,13 @@ def run_inference(template_dir, rgb_path, num_max_dets, conf_threshold, stabilit
         }
     )
     proposal_processor = CropResizePad(processing_config.image_size)
-    templates = proposal_processor(images=templates, boxes=boxes).cuda()
+    
+    # templates = proposal_processor(images=templates, boxes=boxes).cuda()
+    if torch.cuda.is_available():
+        templates = proposal_processor(images=templates, boxes=boxes).cuda()
+    else:
+        templates = proposal_processor(images=templates, boxes=boxes).cpu()
+
     save_image(templates, f"{template_dir}/cnos_results/templates.png", nrow=7)
     ref_feats = model.descriptor_model.compute_features(
                     templates, token_name="x_norm_clstoken"
