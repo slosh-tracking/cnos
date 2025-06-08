@@ -43,15 +43,17 @@ def visualize(rgb, detections, save_path="/content/tmp/tmp.png"):
     gray = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2GRAY)
     img = cv2.cvtColor(gray, cv2.COLOR_GRAY2RGB)
     # img = (255*img).astype(np.uint8)
+
+    detections = detections[0]
+        
     colors = distinctipy.get_colors(len(detections))
     alpha = 0.33
 
     for mask_idx, det in enumerate(detections):
-        if det:
-            mask = rle_to_mask(det[mask_idx]["segmentation"])
+            mask = rle_to_mask(det["segmentation"])
             edge = canny(mask)
             edge = binary_dilation(edge, np.ones((2, 2)))
-            obj_id = det[mask_idx]["category_id"]
+            obj_id = det["category_id"]
             temp_id = obj_id - 1
 
             r = int(255*colors[temp_id][0])
